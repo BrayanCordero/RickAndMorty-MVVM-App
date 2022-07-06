@@ -44,10 +44,10 @@ class CharactersFragment : BaseFragment() {
                     binding.charactersRecycler.visibility = View.GONE
                 }
                 is UIState.SUCCESS<*> ->{
-                    (state as UIState.SUCCESS<CharacterResponse>).response
+                    (state as UIState.SUCCESS<List<DomainCharacter>>).response
                     binding.charactersRecycler.visibility = View.VISIBLE
 
-                    characterAdapter.updateNewCharacters(state.response.results?: emptyList())
+                    characterAdapter.updateNewCharacters(state.response)
                 }
                 is UIState.ERROR->{
                     binding.charactersRecycler.visibility = View.GONE

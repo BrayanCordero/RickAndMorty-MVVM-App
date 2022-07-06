@@ -31,8 +31,8 @@ class RickAndMortyViewModel @Inject constructor(
                 if(response.isSuccessful){
                     response.body()?.let {
                         withContext(Dispatchers.Main){
-                            _characters.value= UIState.SUCCESS(it)
-//                            _characters.value = UIState.SUCCESS(it.results.mapToDomainCharacter())
+//                            _characters.value= UIState.SUCCESS(it)
+                            _characters.value = UIState.SUCCESS(it.results.mapToDomainCharacter())
                         }
                     }?: throw ResponseBodyNullException(ERROR_GETTING_CHARACTERS)
                 }else{

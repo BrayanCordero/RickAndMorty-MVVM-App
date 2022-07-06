@@ -10,12 +10,12 @@ import com.example.rickmorty_mvvm_app.models.character.Character
 
 
 class CharactersAdapter(
-//    private val charactersSet: MutableList<DomainCharacter> = mutableListOf(),
-    private val charactersSet: MutableList<Character> = mutableListOf(),
+    private val charactersSet: MutableList<DomainCharacter> = mutableListOf(),
+//    private val charactersSet: MutableList<Character> = mutableListOf(),
     private val onCharacterClicked:(String?)-> Unit
 ):RecyclerView.Adapter<CharactersViewHolder>() {
 
-    fun updateNewCharacters(newCharacter: List<Character>){
+    fun updateNewCharacters(newCharacter: List<DomainCharacter>){
         charactersSet.clear()
         charactersSet.addAll(newCharacter)
         notifyDataSetChanged()
@@ -41,14 +41,14 @@ class CharactersAdapter(
 class CharactersViewHolder(
     private val binding: CharacterItemBinding
 ): RecyclerView.ViewHolder(binding.root){
-    fun bind(character: Character, onCharacterClicked:(String?)->Unit){
+    fun bind(character: DomainCharacter, onCharacterClicked:(String?)->Unit){
         binding.characterIdText.text = character.id.toString()
         binding.characterNameText.text = character.name
-        binding.characterLocationText.text = character.location?.name
+        binding.characterLocationText.text = character.location
         binding.characterStatusText.text = character.status
 
         Glide.with(binding.root)
-            .load(character.image)
+            .load(character.imageUrl)
             .override(300,300)
             .into(binding.characterImage)
 
