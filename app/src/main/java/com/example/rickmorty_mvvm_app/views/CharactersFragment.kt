@@ -2,17 +2,19 @@ package com.example.rickmorty_mvvm_app.views
 
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.rickmorty_mvvm_app.R
+import com.example.rickmorty_mvvm_app.adapter.CharacterClick
 import com.example.rickmorty_mvvm_app.adapter.CharactersAdapter
 import com.example.rickmorty_mvvm_app.databinding.FragmentCharactersBinding
 import com.example.rickmorty_mvvm_app.domain.DomainCharacter
-import com.example.rickmorty_mvvm_app.models.character.CharacterResponse
+import com.example.rickmorty_mvvm_app.models.character.CharacterInfo
 import com.example.rickmorty_mvvm_app.utils.UIState
 
 class CharactersFragment : BaseFragment() {
@@ -22,13 +24,19 @@ class CharactersFragment : BaseFragment() {
     }
 
     private val characterAdapter by lazy{
-        CharactersAdapter{
-
-        }
+        CharactersAdapter(object : CharacterClick{
+            override fun onCharacterClicked(character: DomainCharacter) {
+                val characterInfo = CharacterInfo(character.id,character.name,character.species,character.origin,
+                character.status,character.location,character.imageUrl,character.episodes)
+                findNavController().navigate(R.id.action_navigation_characters_fragment_to_navigation_character_details_fragment, bundleOf(
+                    Pair(CharacterDetailsFragment.CHARACTER_DATA, characterInfo)
+                ))
+            }
+        })
     }
 
     private val startingPage = 1
-   private var isLoading = true
+   private var isLoading = false
 
 
     override fun onCreateView(
