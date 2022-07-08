@@ -78,6 +78,9 @@ dependencies {
         exclude group: "com.android.support"
     }
 
+    //Paging3
+    implementation "androidx.paging:paging-runtime:3.0.0-alpha12"
+
 
 
 

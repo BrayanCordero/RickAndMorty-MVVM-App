@@ -16,7 +16,7 @@ class CharactersAdapter(
 ):RecyclerView.Adapter<CharactersViewHolder>() {
 
     fun updateNewCharacters(newCharacter: List<DomainCharacter>){
-        charactersSet.clear()
+//        charactersSet.clear()
         charactersSet.addAll(newCharacter)
         notifyDataSetChanged()
     }

@@ -3,11 +3,14 @@ package com.example.rickmorty_mvvm_app.rest
 import com.example.rickmorty_mvvm_app.models.character.CharacterResponse
 import retrofit2.Response
 import retrofit2.http.GET
+import retrofit2.http.Query
 
 interface ApiService {
 
     @GET(CHARACTER_PATH)
-    suspend fun getAllCharacters(): Response<CharacterResponse>
+    suspend fun getAllCharacters(
+        @Query("page") page : Int
+    ): Response<CharacterResponse>
 
 
 
