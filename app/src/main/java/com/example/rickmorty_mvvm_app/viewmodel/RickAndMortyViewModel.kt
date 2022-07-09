@@ -9,6 +9,7 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.example.rickmorty_mvvm_app.domain.mapToDomainCharacter
+import com.example.rickmorty_mvvm_app.domain.mapToDomainLocation
 import com.example.rickmorty_mvvm_app.models.character.Character
 import com.example.rickmorty_mvvm_app.models.character.CharacterResponse
 import com.example.rickmorty_mvvm_app.rest.RickAndMortyRepository
@@ -33,8 +34,11 @@ class RickAndMortyViewModel @Inject constructor(
     private val _characters: MutableLiveData<UIState> = MutableLiveData(UIState.LOADING)
     val characters: LiveData<UIState> get() = _characters
 
-    private val _charactersPaging: MutableLiveData<PagingData<UIState>> = MutableLiveData()
-    val charactersPaging: LiveData<PagingData<UIState>> get() = _charactersPaging
+    private val _locations: MutableLiveData<UIState> = MutableLiveData(UIState.LOADING)
+    val locations: LiveData<UIState> get() = _locations
+
+//    private val _charactersPaging: MutableLiveData<PagingData<UIState>> = MutableLiveData()
+//    val charactersPaging: LiveData<PagingData<UIState>> get() = _charactersPaging
 
     fun getAllCharacters(page:Int) {
         CoroutineScope(Dispatchers.IO).launch {
@@ -58,6 +62,27 @@ class RickAndMortyViewModel @Inject constructor(
         }
     }
 
+    fun getAllLocations(page: Int){
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val response = rickAndMortyRepository.getAllLocations(page)
+                if(response.isSuccessful){
+                    response.body()?.let {
+                        withContext(Dispatchers.Main){
+                            _locations.value = UIState.SUCCESS(it.results.mapToDomainLocation())
+                        }
+                    }?: throw ResponseBodyNullException(ERROR_GETTING_LOCATIONS)
+                }else{
+                    throw FailureResponseException(ERROR_GETTING_LOCATIONS)
+                }
+            }catch (e: Exception){
+                withContext(Dispatchers.Main){
+                    _locations.postValue(UIState.ERROR(e))
+                }
+            }
+        }
+    }
+
 //    fun getPagingCharacters(){
 //        CoroutineScope(Dispatchers.IO).launch {
 //           rickAndMortyRepository.getPagingCharacters().collect{
@@ -70,6 +95,7 @@ class RickAndMortyViewModel @Inject constructor(
 
         companion object {
         private const val ERROR_GETTING_CHARACTERS = "CHARACTERS"
+        private const val ERROR_GETTING_LOCATIONS = "LOCATIONS"
 
     }
 }

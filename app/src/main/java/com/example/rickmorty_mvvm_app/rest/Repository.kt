@@ -5,6 +5,7 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.example.rickmorty_mvvm_app.models.character.Character
 import com.example.rickmorty_mvvm_app.models.character.CharacterResponse
+import com.example.rickmorty_mvvm_app.models.location.LocationResponse
 import com.example.rickmorty_mvvm_app.utils.CharactersPaging
 import com.example.rickmorty_mvvm_app.utils.UIState
 import kotlinx.coroutines.flow.Flow
@@ -14,6 +15,7 @@ import javax.inject.Inject
 
 interface RickAndMortyRepository{
     suspend fun getAllCharacters(page:Int) : Response<CharacterResponse>
+    suspend fun getAllLocations(page: Int) : Response<LocationResponse>
 //    fun getPagingCharacters(): Flow<PagingData<UIState>>
 }
 
@@ -23,6 +25,10 @@ class RepositoryImp @Inject constructor(
 
     override suspend fun getAllCharacters(page:Int): Response<CharacterResponse> =
         serviceApi.getAllCharacters(page)
+
+    override suspend fun getAllLocations(page: Int): Response<LocationResponse> =
+        serviceApi.getAllLocations(page)
+
 
 //    override fun getPagingCharacters(): Flow<PagingData<UIState>> =
 //        Pager(config = PagingConfig(pageSize = 20, prefetchDistance = 2),

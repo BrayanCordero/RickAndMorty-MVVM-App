@@ -7,6 +7,9 @@
         <entry key="app/src/main/res/layout/character_item.xml" value="0.2852691650390625" />
         <entry key="app/src/main/res/layout/fragment_character_details.xml" value="0.29219168650463845" />
         <entry key="app/src/main/res/layout/fragment_characters.xml" value="0.15704154002026344" />
+        <entry key="app/src/main/res/layout/fragment_location_details.xml" value="0.31254425048828127" />
+        <entry key="app/src/main/res/layout/fragment_locations.xml" value="0.10648148148148148" />
+        <entry key="app/src/main/res/layout/location_item.xml" value="0.321875" />
         <entry key="app/src/main/res/menu/menu.xml" value="0.1" />
       </map>
     </option>

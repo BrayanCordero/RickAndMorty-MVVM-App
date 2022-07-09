@@ -36,7 +36,7 @@ class CharactersFragment : BaseFragment() {
     }
 
     private val startingPage = 1
-   private var isLoading = false
+    private var isLoading = false
 
 
     override fun onCreateView(
@@ -82,10 +82,10 @@ class CharactersFragment : BaseFragment() {
                 val lastVisibleItem: Int = linearLayout.findLastVisibleItemPosition()
                 val total = linearLayout.itemCount
 
-                Log.d("Scroll","$visibleItemCount")
-                Log.d("Scroll","$lastVisibleItem")
-                Log.d("Scroll","$total")
-                if(!isLoading) {
+//                Log.d("Scroll","$visibleItemCount")
+//                Log.d("Scroll","$lastVisibleItem")
+//                Log.d("Scroll","$total")
+                if(!isLoading && total<827) {
                     if (lastVisibleItem == total-1) {
                         var currentPage = total / 20
                         var nextPage = currentPage + 1

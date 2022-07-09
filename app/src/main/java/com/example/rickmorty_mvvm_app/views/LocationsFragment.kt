@@ -1,32 +1,51 @@
 package com.example.rickmorty_mvvm_app.views
 
 import android.os.Bundle
+import android.provider.Contacts
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
+import androidx.core.os.bundleOf
+import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.rickmorty_mvvm_app.R
+import com.example.rickmorty_mvvm_app.adapter.LocationClick
+import com.example.rickmorty_mvvm_app.adapter.LocationsAdapter
+import com.example.rickmorty_mvvm_app.databinding.FragmentLocationsBinding
+import com.example.rickmorty_mvvm_app.domain.DomainLocation
+import com.example.rickmorty_mvvm_app.models.location.LocationInfo
+import com.example.rickmorty_mvvm_app.utils.UIState
+import okhttp3.internal.wait
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [LocationsFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
-class LocationsFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+class LocationsFragment : BaseFragment(){
+
+    private val binding by lazy{
+        FragmentLocationsBinding.inflate(layoutInflater)
+    }
+
+    private val locationAdapter by lazy{
+        LocationsAdapter(object : LocationClick{
+            override fun onLocationClicked(location: DomainLocation) {
+                val locationInfo = LocationInfo(location.id,location.name,location.type,
+                location.dimension, location.created,location.residents)
+                findNavController().navigate(R.id.action_navigation_locations_fragment_to_navigation_location_details_fragment, bundleOf(
+                    Pair(LocationDetailsFragment.LOCATION_DATA, locationInfo)
+                ))
+            }
+        })
+    }
+
+    private val staringPage = 1
+    private var isLoading = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+
         }
     }
 
@@ -35,26 +54,60 @@ class LocationsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_locations, container, false)
+
+        val linearLayout = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+        binding.locationRecycler.apply {
+            layoutManager = linearLayout
+            adapter = locationAdapter
+        }
+
+        rickAndMortyViewModel.locations.observe(viewLifecycleOwner){state ->
+            when(state){
+                is UIState.LOADING->{
+                    binding.locationRecycler.visibility = View.GONE
+                }
+                is UIState.SUCCESS<*>->{
+                    (state as UIState.SUCCESS<List<DomainLocation>>).response
+                    binding.locationRecycler.visibility = View.VISIBLE
+
+                    locationAdapter.updateNewLocations(state.response)
+                    isLoading = false
+                }
+                is UIState.ERROR->{
+                    binding.locationRecycler.visibility = View.GONE
+
+                    showError(state.error.localizedMessage){
+                        rickAndMortyViewModel.getAllLocations(staringPage)
+                    }
+                }
+            }
+        }
+
+        binding.locationRecycler.addOnScrollListener(object : RecyclerView.OnScrollListener(){
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+
+                val lastVisibleItem: Int = linearLayout.findLastVisibleItemPosition()
+                val total = linearLayout.itemCount
+
+                if(!isLoading && total <127){
+                    if(lastVisibleItem == total-1){
+                        var currentPage = total/20
+                        var nextPage = currentPage+1
+                        rickAndMortyViewModel.getAllLocations(nextPage)
+                        isLoading = true
+                    }
+                }
+
+            }
+        })
+
+        rickAndMortyViewModel.getAllLocations(staringPage)
+
+        return binding.root
     }
 
     companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment LocationsFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            LocationsFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
+
     }
 }

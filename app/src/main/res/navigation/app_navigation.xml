@@ -21,17 +21,24 @@
         android:name="com.example.rickmorty_mvvm_app.views.LocationsFragment"
         tools:layout="@layout/fragment_locations"
         android:label="Locations">
-
         <action
-            android:id="@+id/action_navigation_locations_fragment_to_navigation_character_details_fragment"
-            app:destination="@id/navigation_details_fragment" />
+            android:id="@+id/action_navigation_locations_fragment_to_navigation_location_details_fragment"
+            app:destination="@id/navigation_location_details_fragment" />
     </fragment>
 
     <fragment
         android:id="@+id/navigation_details_fragment"
         android:name="com.example.rickmorty_mvvm_app.views.CharacterDetailsFragment"
         tools:layout="@layout/fragment_character_details"
-        android:label="Detailas">
+        android:label="Details">
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_location_details_fragment"
+        android:name="com.example.rickmorty_mvvm_app.views.LocationDetailsFragment"
+        tools:layout="@layout/fragment_location_details"
+        android:label="Location Details">
 
     </fragment>
 
