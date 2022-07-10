@@ -37,7 +37,13 @@ class CharactersFragment : BaseFragment() {
 
     private val startingPage = 1
     private var isLoading = false
+//    private var total = 0
 
+
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -45,7 +51,7 @@ class CharactersFragment : BaseFragment() {
     ): View? {
         // Inflate the layout for this fragment
 
-        val linearLayout = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+        val  linearLayout = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         binding.charactersRecycler.apply {
             layoutManager = linearLayout
             adapter = characterAdapter
@@ -80,15 +86,19 @@ class CharactersFragment : BaseFragment() {
 
                 val visibleItemCount:Int = binding.charactersRecycler.layoutManager!!.childCount
                 val lastVisibleItem: Int = linearLayout.findLastVisibleItemPosition()
-                val total = linearLayout.itemCount
+//                if(total != null){
+                var total = linearLayout.itemCount
+//                else{
+//                    total = rickAndMortyViewModel.recyclerChildCount
+//                }
 
-//                Log.d("Scroll","$visibleItemCount")
-//                Log.d("Scroll","$lastVisibleItem")
-//                Log.d("Scroll","$total")
+                Log.d("Scroll","$visibleItemCount")
+                Log.d("Scroll","$lastVisibleItem")
+                Log.d("Scroll","$total")
                 if(!isLoading && total<827) {
                     if (lastVisibleItem == total-1) {
-                        var currentPage = total / 20
-                        var nextPage = currentPage + 1
+                         var currentPage = total / 20
+                         var nextPage = currentPage + 1
                         rickAndMortyViewModel.getAllCharacters(nextPage)
                         isLoading = true
                     }
@@ -96,10 +106,34 @@ class CharactersFragment : BaseFragment() {
             }
         })
 
-
-        rickAndMortyViewModel.getAllCharacters(startingPage)
+        if(rickAndMortyViewModel.recyclerState == null){
+            rickAndMortyViewModel.getAllCharacters(startingPage)
+        }
 
         return binding.root
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        rickAndMortyViewModel.recyclerState = binding.charactersRecycler.layoutManager?.onSaveInstanceState()
+//        rickAndMortyViewModel.recyclerChildCount = binding.charactersRecycler.layoutManager!!.itemCount
+
+    }
+
+    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+        super.onViewStateRestored(savedInstanceState)
+        rickAndMortyViewModel.recyclerState?.let {
+            binding.charactersRecycler.layoutManager?.onRestoreInstanceState(it)
+        }
+        rickAndMortyViewModel.recyclerState = null
+
+
+    }
+
+    override fun onStop() {
+        super.onStop()
+        rickAndMortyViewModel.characters.removeObservers(viewLifecycleOwner)
+
     }
 
 

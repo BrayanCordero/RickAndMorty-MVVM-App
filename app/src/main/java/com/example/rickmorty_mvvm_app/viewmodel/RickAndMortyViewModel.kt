@@ -1,5 +1,6 @@
 package com.example.rickmorty_mvvm_app.viewmodel
 
+import android.os.Parcelable
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -31,6 +32,8 @@ class RickAndMortyViewModel @Inject constructor(
     private val rickAndMortyRepository: RickAndMortyRepository
 ): ViewModel() {
 
+//    var recyclerChildCount: Int = 0
+    var recyclerState: Parcelable? = null
     private val _characters: MutableLiveData<UIState> = MutableLiveData(UIState.LOADING)
     val characters: LiveData<UIState> get() = _characters
 
